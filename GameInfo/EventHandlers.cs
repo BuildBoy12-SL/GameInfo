@@ -7,6 +7,7 @@
 
 namespace GameInfo
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using AdvancedHints;
@@ -56,13 +57,17 @@ namespace GameInfo
         private string FormatInfo()
         {
             int timeUntilRespawn = Respawn.IsSpawning ? Respawn.TimeUntilRespawn + 15 : Respawn.TimeUntilRespawn;
+            TimeSpan timeSpan = TimeSpan.FromSeconds(timeUntilRespawn);
 
             return plugin.Config.Format
-                    .Replace("{spectators}", Player.Get(Team.RIP).Count().ToString())
-                    .Replace("{spawntime}", $"{timeUntilRespawn / 60}:{timeUntilRespawn % 60}")
-                    .Replace("{aliveplayers}", Player.List.Where(player => player.IsAlive).Count().ToString())
-                    .Replace("{playercount}", Server.PlayerCount.ToString())
-                    .Replace("{maxplayercount}", Server.MaxPlayerCount.ToString());
+                .Replace("{spectators}", Player.Get(Team.RIP).Count().ToString())
+                .Replace("{spawntime}", timeSpan.ToString(@"mm\:ss"))
+                .Replace("{aliveplayers}", Player.List.Where(player => player.IsAlive).Count().ToString())
+                .Replace("{playercount}", Server.PlayerCount.ToString())
+                .Replace("{maxplayercount}", Server.MaxPlayerCount.ToString())
+                .Replace("{escapedclassd}", RoundSummary.EscapedClassD.ToString())
+                .Replace("{escapedscientists}", RoundSummary.EscapedScientists.ToString())
+                .Replace("{totalescapes}", (RoundSummary.EscapedClassD + RoundSummary.EscapedScientists).ToString());
         }
     }
 }
